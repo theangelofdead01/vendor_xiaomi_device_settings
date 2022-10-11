@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
      Copyright (C) 2015-2016 The CyanogenMod Project
-                   2017-2020 The LineageOS Project
+                   2017 The LineageOS Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -21,8 +21,7 @@
     android:versionName="1.0"
     android:sharedUserId="android.uid.system">
 
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-    <uses-permission android:name="android.permission.GET_TASKS" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.VIBRATE" />
 
@@ -34,13 +33,11 @@
 
     <application
         android:label="@string/deviceparts_label"
-        android:persistent="true"
-        android:defaultToDeviceProtectedStorage="true"
-        android:directBootAware="true">
+        android:persistent="true">
 
         <receiver android:name=".BootCompletedReceiver">
             <intent-filter android:priority="1000">
-                <action android:name="android.intent.action.LOCKED_BOOT_COMPLETED" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </receiver>
@@ -58,6 +55,24 @@
                        android:resource="@string/dirac_summary" />
         </activity>
 
+        <activity
+            android:name=".display.LcdFeaturesPreferenceActivity"
+            android:label="@string/lcd_features_title"
+            android:theme="@style/Theme.SubSettingsBase">
+            <intent-filter>
+                <action android:name="com.android.settings.action.IA_SETTINGS" />
+            </intent-filter>
+            <meta-data
+                android:name="com.android.settings.category"
+                android:value="com.android.settings.category.ia.display" />
+            <meta-data
+                android:name="com.android.settings.summary"
+                android:resource="@string/lcd_features_summary" />
+            <meta-data
+                android:name="com.android.settings.order"
+                android:value="5" />
+        </activity>
+
         <service android:name=".doze.DozeService"
                  android:permission="XiaomiDozeService">
         </service>
@@ -69,27 +84,19 @@
             <intent-filter>
                 <action android:name="com.android.settings.action.IA_SETTINGS" />
             </intent-filter>
-            <meta-data android:name="com.android.settings.category"
-                       android:value="com.android.settings.category.ia.display" />
-        </activity>
-
-        <activity
-            android:name=".thermal.ThermalActivity"
-            android:label="@string/thermal_title"
-            android:theme="@style/Theme.SubSettingsBase">
-            <intent-filter>
-                <action android:name="com.android.settings.action.IA_SETTINGS" />
-            </intent-filter>
             <meta-data
                 android:name="com.android.settings.category"
-                android:value="com.android.settings.category.ia.battery" />
+                android:value="com.android.settings.category.ia.display" />
             <meta-data
                 android:name="com.android.settings.summary"
-                android:resource="@string/thermal_summary" />
+                android:resource="@string/ambient_display_ia_summary" />
+            <meta-data
+                android:name="com.android.settings.order"
+                android:value="3" />
         </activity>
 
         <activity
-            android:name=".speaker.ClearSpeakerActivity" 
+            android:name=".speaker.ClearSpeakerActivity"
             android:label="@string/clear_speaker_title"
             android:theme="@style/Theme.SubSettingsBase">
             <intent-filter>
@@ -100,11 +107,6 @@
             <meta-data android:name="com.android.settings.summary"
                        android:resource="@string/clear_speaker_summary" />
         </activity>
-
-        <service
-            android:name=".thermal.ThermalService"
-            android:permission="ThermalService">
-        </service>
 
         <activity
             android:name=".haptic.HapticLevelActivity"
@@ -119,25 +121,54 @@
                        android:resource="@string/haptic_summary" />
         </activity>
 
-        <activity 
-            android:name=".refreshrate.RefreshActivity" 
-            android:label="@string/refresh_title" 
-            android:exported="true" 
-            android:theme="@style/Theme.SubSettingsBase">
+        <activity
+            android:name=".touchscreen.TouchModeActivity"
+            android:label="@string/touch_control_title"
+            android:theme="@style/Theme.SubSettingsBase"
+            android:exported="true">
             <intent-filter>
                 <action android:name="com.android.settings.action.IA_SETTINGS" />
             </intent-filter>
-            <meta-data 
-                android:name="com.android.settings.category" 
-                android:value="com.android.settings.category.ia.display" />
-            <meta-data 
-                android:name="com.android.settings.summary" 
-                android:resource="@string/refresh_summary" />
+            <meta-data
+                android:name="com.android.settings.category"
+                android:value="com.android.settings.category.ia.apps" />
+            <meta-data
+                android:name="com.android.settings.summary"
+                android:resource="@string/touch_control_summary" />
         </activity>
 
-        <service 
-            android:name=".refreshrate.RefreshService" 
-            android:permission="RefreshService">
+        <service
+            android:name=".touchscreen.TouchModeService"
+            android:permission="TouchModeService">
+        </service>
+
+        <activity
+            android:name=".TileEntryActivity"
+            android:label="@string/deviceparts_label"
+            android:theme="@style/Theme.SubSettingsBase">
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE_PREFERENCES" />
+            </intent-filter>
+        </activity>
+
+        <service
+            android:name=".display.HbmTileService"
+            android:icon="@drawable/ic_hbm"
+            android:label="@string/lcd_hbm_tile_title"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE"/>
+            </intent-filter>
+        </service>
+
+        <service
+            android:name=".display.CabcTileService"
+            android:icon="@drawable/ic_cabc"
+            android:label="@string/lcd_cabc_tile_title"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE"/>
+            </intent-filter>
         </service>
 
         <service
@@ -150,34 +181,30 @@
             </intent-filter>
         </service>
 
-        <service
-            android:name=".thermal.ThermalTileService"
-            android:icon="@drawable/ic_thermal"
-            android:label="@string/thermal_tile_title"
-            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+        <activity
+            android:name=".kcal.KcalSettingsActivity"
+            android:theme="@style/Theme.SubSettingsBase"
+            android:label="@string/advanced_settings_kcal">
             <intent-filter>
-                <action
-                    android:name="android.service.quicksettings.action.QS_TILE"/>
-            </intent-filter>
-        </service>
-        
-               <service
-            android:name=".fpsinfo.FPSInfoService"
-            android:exported="false">
-        </service>
-
-        <service
-            android:name=".fpsinfo.FPSTileService"
-            android:icon="@drawable/ic_fps"
-            android:label="@string/fps_info_title"
-            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
-            <intent-filter>
-                <action
-                    android:name="android.service.quicksettings.action.QS_TILE"/>
+                <action android:name="com.android.settings.action.IA_SETTINGS" />
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
             <meta-data 
-                android:name="android.service.quicksettings.TOGGLEABLE_TILE" 
-                android:value="true" />
+                android:name="com.android.settings.category"
+                android:value="com.android.settings.category.ia.display" />
+            <meta-data
+                android:name="com.android.settings.summary"
+                android:resource="@string/device_kcal_summary" />
+        </activity>
+
+        <service
+            android:name=".dirac.DiracTileService"
+            android:icon="@drawable/ic_headphone"
+            android:label="@string/dirac_qs_tile_title"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE"/>
+            </intent-filter>
         </service>
 
     </application>
